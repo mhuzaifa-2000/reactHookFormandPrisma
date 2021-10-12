@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import {
   Table,
   TableContainer,
@@ -9,13 +10,26 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+
+const queryClient = new QueryClient();
+
 export default function Students() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <StudentsTable />
+    </QueryClientProvider>
+  );
+}
+
+function StudentsTable() {
   const [students, setStudents] = useState([]);
-  useEffect(() => {
+  const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
     axios
       .get("http://localhost:5000/user/")
-      .then((response) => setStudents(response.data));
-  }, []);
+      .then((response) => setStudents(response.data))
+  );
+  if (isLoading) return <h1>Loading...</h1>;
+  if (error) return <h1>Error fetching data...</h1>;
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

@@ -4,6 +4,15 @@ const saltRounds = 10;
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+router.delete("/", (req, res) => {
+  const { id } = req.body;
+
+  prisma.user.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+});
 router.get("/", (req, res) => {
   prisma.user
     .findMany({})
@@ -42,7 +51,7 @@ router.put("/:id", (req, res) => {
   const toUpdate = req.body;
 
   prisma.user
-    .update({
+    .updateOne({
       where: { id: id },
       data: toUpdate,
     })
